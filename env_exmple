@@ -1,0 +1,12 @@
+DB_NAME=
+DB_USER=
+DB_PASS=
+DB_HOST=
+DB_PORT=
+
+EMAIL_PORT=587
+EMAIL_USE_TLS=True
+EMAIL_HOST_USER = omorovmeder23@gmail.com
+EMAIL_HOST_PASSWORD = nrtn bmoj kpio xsmt
+
+ALLOWED_HOSTS=localhost *
