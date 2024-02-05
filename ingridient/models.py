@@ -13,6 +13,6 @@ class Ingridient(models.Model):
     )
     name = models.CharField(max_length = 100,unique = True)
     category = models.CharField(choices = CATEGORY_CHOICES,max_length = 100)
-    image = models.ImageField(upload_to='media')
+    image = models.ImageField(upload_to='media', null=True)
     
 
