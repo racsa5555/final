@@ -27,6 +27,11 @@ class Dish(models.Model):
         ('Soup','Суп'),
         ('Salad','Салат')
     )
+    LEVEL = (
+        ('Easy','Легкий'),
+        ('Medium','Средний'),
+        ('Hard','Сложный')
+    )
     name = models.CharField(max_length = 100,unique = True,null = False)
     cuisine = models.CharField(choices = CUISINE_CHOICES,max_length = 50)
     type = models.CharField(choices = TYPE_CHOICES)
@@ -34,7 +39,9 @@ class Dish(models.Model):
     ingridients = models.ManyToManyField(Ingridient,through=IngridientItem,related_name='ingridients')
     photo = models.ImageField(upload_to='media',null = True)
     recipe = models.TextField()
+    level = models.CharField(choices = LEVEL,default = 'Easy')
     owner = models.ForeignKey(User,on_delete = models.CASCADE,related_name = 'dishes')
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
+
 

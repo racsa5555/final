@@ -14,6 +14,18 @@ class DishViewSet(ModelViewSet):
     queryset = Dish.objects.all()
     
     def list(self, request, *args, **kwargs):
-        queryset = Ingridient.objects.all()
-        serializers = IngridientSerializer(queryset,many = True)
+        serializers = self.serializer_class(self.queryset,many = True)
         return Response(serializers.data)
+
+class YouCanCook(ListCreateAPIView):
+    serializer_class = DishSerializer
+
+    def list(self, request, *args, **kwargs):
+        queryset = Ingridient.objects.all()
+        serializer = IngridientSerializer(queryset,many = True)
+        return Response(serializer.data)
+
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        
