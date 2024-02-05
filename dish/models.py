@@ -1,7 +1,13 @@
 from django.db import models
 from django.contrib.auth import get_user_model
+from ingridient.models import Ingridient
 
 User = get_user_model()
+
+class IngridientItem(models.Model):
+    ingridient = models.ForeignKey(Ingridient,on_delete = models.CASCADE,related_name = 'items')
+    dish = models.ForeignKey('Dish',on_delete = models.CASCADE,related_name ='items')
+    quantity = models.PositiveIntegerField(default = 1)
 
 class Dish(models.Model):
     CUISINE_CHOICES = (
@@ -14,7 +20,7 @@ class Dish(models.Model):
     )
     TYPE_CHOICES = (
         ('Snack','Закускa'),
-        ('First course','Певрое блюдо'),
+        ('First course','Первое блюдо'),
         ('Hot dish','Горячее блюдо'),
         ('Dessert','Десерт'),
         ('Cocktail','Коктейль'),
@@ -25,6 +31,7 @@ class Dish(models.Model):
     cuisine = models.CharField(choices = CUISINE_CHOICES,max_length = 50)
     type = models.CharField(choices = TYPE_CHOICES)
     cooking_time = models.PositiveIntegerField()
+    ingridients = models.ManyToManyField(Ingridient,through=IngridientItem,related_name='ingridients')
     photo = models.ImageField(upload_to='media',null = True)
     recipe = models.TextField()
     owner = models.ForeignKey(User,on_delete = models.CASCADE,related_name = 'dishes')
