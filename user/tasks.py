@@ -5,7 +5,6 @@ from config.celery import app
 # @shared_task
 @app.task
 def send_confirm_email_task(email, code):
-    print('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     send_confirmation_email(email, code)
 
 @app.task
