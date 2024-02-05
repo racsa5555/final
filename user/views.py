@@ -34,26 +34,14 @@ class RegistrationView(APIView):
             return Response(serializer.data, status=HTTPStatus.CREATED)
         
 class ActivationView(APIView):
-    def post(self, request):
-        activation_code = request.data.get('activation_code')
-        if not activation_code:
-            return Response({
-                'error': 'Нужен код активации'
-            }, status=HTTPStatus.BAD_REQUEST)
-        user = get_object_or_404(User, activation_code=activation_code)
+    def get(self, request):
+        code = request.query_params.get('u')
+        user = get_object_or_404(User, activation_code=code)
         user.is_active = True
         user.activation_code = ''
         user.save()
-        try:
-            send_confirmation_email(user.email, user.activation_code)
-            return Response({
-                'message': 'Пользователь активирован'}, status=HTTPStatus.OK
-            )
-        except Exception as e:
-            return Response(
-                {'error': f'Ошибка при отправке подтверждения по электронной почте: {e}'},
-                            status=HTTPStatus.INTERNAL_SERVER_ERROR
-            )
+        return Response('Активирован', status=HTTPStatus.OK)
+
 
 class LogoutView(APIView):
     serializer_class = LogOutSerialzer
