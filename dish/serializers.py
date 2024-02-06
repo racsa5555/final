@@ -1,6 +1,10 @@
-from .models import Dish,IngridientItem
 from ingridient.models import Ingridient
 from rest_framework import serializers
+from django.db.models import Avg
+
+from .models import Dish,IngridientItem
+from comment.models import Comment
+from comment.serializers import CommentSerializer
 
 class IngridientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,4 +47,8 @@ class DishSerializer(serializers.ModelSerializer):
         for ingridient in ingridient_list:
             id = ingridient.pop('ingridient')
             ingridient['ingridient'] = Ingridient.objects.get(pk=id).name
+            ingridient['id'] = id
         return rep
+    
+
+
