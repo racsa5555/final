@@ -8,7 +8,14 @@ class IngridientItem(models.Model):
     ingridient = models.ForeignKey(Ingridient,on_delete = models.CASCADE,related_name = 'items')
     dish = models.ForeignKey('Dish',on_delete = models.CASCADE,related_name ='items')
     quantity = models.PositiveIntegerField(default = 1)
+# ingridientItem1 - мясо
+# ingridientItem2 - яйцо
+# for d in Dish.objects.prefetch_related():
+#   for x in d.items:
+    # if x.id in set
+    # queryset.
 
+    
 class Dish(models.Model):
     CUISINE_CHOICES = (
         ('Asian','Азитаская'),
@@ -40,6 +47,8 @@ class Dish(models.Model):
     photo = models.ImageField(upload_to='media',null = True)
     recipe = models.TextField()
     level = models.CharField(choices = LEVEL,default = 'Easy')
+    quant_people = models.PositiveIntegerField(null = True)
+    description = models.TextField(null = True)
     owner = models.ForeignKey(User,on_delete = models.CASCADE,related_name = 'dishes')
     created_at = models.DateTimeField(auto_now_add = True)
     updated_at = models.DateTimeField(auto_now = True)
