@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
     'django_filters',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -64,9 +65,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
-CORS_ORIGIN_ALLOW_ALL=True
-CORS_ALLOW_CREADENTIALS=True
+
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Разрешенный домен
+]
 
 ROOT_URLCONF = 'config.urls'
 
