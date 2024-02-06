@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'user',
     'comment',
     'dish',
-    'favorite',
     'ingridient',
     'like',
     'rating',
@@ -54,6 +53,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'drf_yasg',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -65,6 +65,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+CORS_ORIGIN_ALLOW_ALL=True
+CORS_ALLOW_CREADENTIALS=True
 
 ROOT_URLCONF = 'config.urls'
 

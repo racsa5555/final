@@ -12,7 +12,7 @@ class Rating(models.Model):
         (4,'Good'),
         (5,'Perfect')
     )
-    product = models.ForeignKey(Dish,on_delete = models.CASCADE,related_name = 'rating')
+    dish = models.ForeignKey(Dish,on_delete = models.CASCADE,related_name = 'rating')
     owner = models.ForeignKey(User,on_delete = models.CASCADE,related_name = 'ratings')
     rating = models.PositiveSmallIntegerField(choices = RATING_CHOICES)
     created_at = models.DateTimeField(auto_now_add = True)

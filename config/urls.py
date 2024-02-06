@@ -21,6 +21,7 @@ urlpatterns = [
     path('api/swagger/',schema_view.with_ui('swagger')),
     path('api/user/', include('user.urls')),
     path('api/dish/', include('dish.urls')),
+    path('api/comment/',include('comment.urls'))
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

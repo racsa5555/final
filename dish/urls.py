@@ -7,7 +7,6 @@ router = DefaultRouter()
 router.register('',DishViewSet)
 
 urlpatterns = [
-    path('my_ingr/',YouCanCook.as_view()),
     path('',include(router.urls)),
     
     
