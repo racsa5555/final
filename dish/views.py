@@ -29,13 +29,10 @@ class DishViewSet(ModelViewSet):
             return [permissions.IsAuthenticated(), IsOwner()]
         return [permissions.AllowAny()]
     
-    # def retrieve(self, request, *args, **kwargs):
-    #     dish = self.get_object()
-    #     comments = Comment.objects.filter(dish = dish)
-    #     rep['comments'] = CommentSerializer(comments,many=True).data
-    #     rep['rating'] = dish.rating.aggregate(Avg('rating'))
-    #     rating = rep['rating']
-    #     rating['rating_count'] = dish.rating.count()
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = DishSerializer(instance, context={'view': 'retrieve'})
+        return Response(serializer.data)
     
     @swagger_auto_schema(method='POST', request_body=CommentSerializer, operation_description='add comment for post')
     

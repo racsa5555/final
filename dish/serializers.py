@@ -1,10 +1,11 @@
 from ingridient.models import Ingridient
 from rest_framework import serializers
-from django.db.models import Avg
+from django.db.models import Avg,Count
 
 from .models import Dish,IngridientItem
 from comment.models import Comment
 from comment.serializers import CommentSerializer
+from like.models import Like
 
 class IngridientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -13,9 +14,17 @@ class IngridientSerializer(serializers.ModelSerializer):
 
 
 class IngridientItemSerializer(serializers.ModelSerializer):
+    ingridient = serializers.SerializerMethodField()
+    id = serializers.SerializerMethodField()
     class Meta:
-        exclude = ['dish','id']
+        fields = ['ingridient','quantity','id']
         model = IngridientItem
+    def get_id(self,obj):
+        id = obj.ingridient.id
+        return id
+    def get_ingridient(self,obj):
+        name = obj.ingridient.name
+        return name
 
 
 class DishSerializer(serializers.ModelSerializer):
@@ -23,6 +32,7 @@ class DishSerializer(serializers.ModelSerializer):
     type = serializers.CharField()
     owner = serializers.ReadOnlyField(source = 'user.email')
     cuisine = serializers.CharField()
+    
     class Meta:
         model = Dish
         fields = '__all__'
@@ -43,11 +53,14 @@ class DishSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         rep = super().to_representation(instance)
         rep['ingridients'] = IngridientItemSerializer(instance.items.all(),many = True).data
-        ingridient_list = rep.get('ingridients')
-        for ingridient in ingridient_list:
-            id = ingridient.pop('ingridient')
-            ingridient['ingridient'] = Ingridient.objects.get(pk=id).name
-            ingridient['id'] = id
+        action = self.context.get('view')
+        if action == 'retrieve':
+            comments = Comment.objects.filter(dish = instance)
+            rep['comments'] = CommentSerializer(comments,many=True).data
+            rep['rating'] = instance.rating.aggregate(Avg('rating'))
+            rating = rep['rating']
+            rating['rating_count'] = instance.rating.count()
+            rep['likes_count'] = Like.objects.filter(dish=instance).count()
         return rep
     
 
