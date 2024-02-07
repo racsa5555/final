@@ -21,9 +21,9 @@ def send_confirmation_email(email, code):
 
 
 def send_password_reset_email(email, user_id):
-    password_reset_url = f'http://34.16.110.19/api/user/password_confirm/{user_id}'
+    password_reset_url = f'{user_id}'
     message = format_html(
-        'Здравствуйте, чтобы восстановить пароль вам нужно перети по ссылке'
+        'Здравствуйте, Ваш код подтверждения:'
         ' {} ',
         password_reset_url
     )

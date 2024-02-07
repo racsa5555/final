@@ -8,5 +8,5 @@ urlpatterns = [
     path('login/', TokenObtainPairView.as_view()),
     path('refresh/', TokenRefreshView.as_view()),
     path('logout/', LogoutView.as_view()),
-    path('reset_password/', CustomResetPasswordView.as_view()),
-    path('password_confirm/<uidb64>/', CustomPasswordConfirmView.as_view())]
+    path('forgot_password/', CustomResetPasswordView.as_view()),
+    path('forgot_password_confirm/', password_confirm)]
