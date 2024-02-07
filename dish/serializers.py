@@ -40,15 +40,6 @@ class DishSerializer(serializers.ModelSerializer):
                 IngridientItem.objects.create(dish = dish,ingridient = ingridient['ingridient'])
         return dish
     
-
-# class DishShortSerializer(serializers.ModelSerializer):
-#     comments = serializers.SerializerMethodField()
-#     likes_count = serializers.SerializerMethodField()
-
-#     class Meta:
-#         model = Dish
-
-
 class DishRetrieveSerializer(serializers.ModelSerializer):
     comments = serializers.SerializerMethodField()
     likes_count = serializers.SerializerMethodField()

@@ -26,34 +26,22 @@ class DishPagination(PageNumberPagination):
 
 
 class DishViewSet(ModelViewSet):
-    queryset = Dish.objects.all()
+    queryset = Dish.objects.prefetch_related('ingridients')
     pagination_class = DishPagination
-    serializer_class = DishRetrieveSerializer
     filter_backends = [DjangoFilterBackend]
     filterset_class = DishFilter
     
-    # def list(self, request, *args, **kwargs):
-    #     serializers = self.serializer_class(self.queryset,many = True)
-    #     return Response(serializers.data)
-
-    
     def get_permissions(self):
-        if self.request.method in ['PATCH', 'PUT', 'DELETE']:
+        if self.request.method in ('PATCH', 'PUT', 'DELETE'):
             return [permissions.IsAuthenticated(), IsOwner()]
         return [permissions.AllowAny()]
     
-    # def get_serializer_class(self):
-    #     if self.request.method == "POST":
-    #         return DishSerializer
-    #     return 
-    
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = DishRetrieveSerializer(instance)
-        return Response(serializer.data)
+    def get_serializer_class(self):
+        if self.action == 'retrieve':
+            return DishRetrieveSerializer
+        return DishSerializer
     
     @swagger_auto_schema(method='POST', request_body=CommentSerializer, operation_description='add comment for post')
-    
     @action(detail=True, methods=['POST'])
     def comment(self, request, pk=None):
         dish = self.get_object()
