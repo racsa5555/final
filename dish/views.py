@@ -5,23 +5,36 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
+from rest_framework.pagination import PageNumberPagination
+from django_filters.rest_framework import DjangoFilterBackend
 
 from like.models import Favorite, Like
 from .models import Dish
 from .serializers import *
 from .permissions import IsOwner
+from .fiters import DishFilter
 from dish import permissions
-from comment.models import Comment
 from comment.serializers import CommentSerializer
 from rating.serializers import RatingSerializer
 
+
+
+class DishPagination(PageNumberPagination):
+    page_size = 10
+    page_query_param = 'page'
+
+
+
 class DishViewSet(ModelViewSet):
-    serializer_class = DishSerializer
     queryset = Dish.objects.all()
+    pagination_class = DishPagination
+    serializer_class = DishRetrieveSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = DishFilter
     
-    def list(self, request, *args, **kwargs):
-        serializers = self.serializer_class(self.queryset,many = True)
-        return Response(serializers.data)
+    # def list(self, request, *args, **kwargs):
+    #     serializers = self.serializer_class(self.queryset,many = True)
+    #     return Response(serializers.data)
 
     
     def get_permissions(self):
@@ -29,9 +42,14 @@ class DishViewSet(ModelViewSet):
             return [permissions.IsAuthenticated(), IsOwner()]
         return [permissions.AllowAny()]
     
+    # def get_serializer_class(self):
+    #     if self.request.method == "POST":
+    #         return DishSerializer
+    #     return 
+    
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
-        serializer = DishSerializer(instance, context={'view': 'retrieve'})
+        serializer = DishRetrieveSerializer(instance)
         return Response(serializer.data)
     
     @swagger_auto_schema(method='POST', request_body=CommentSerializer, operation_description='add comment for post')
