@@ -1,7 +1,7 @@
 from http import HTTPStatus
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from .serializers import RegisterSerializer, LogOutSerialzer
 from django.contrib.auth import get_user_model
 from .send_email import send_confirmation_email
@@ -9,6 +9,8 @@ from django.shortcuts import get_object_or_404
 from .tasks import send_confirm_email_task, send_password_reset_task
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import permissions
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 User = get_user_model()
 
@@ -66,15 +68,30 @@ class CustomResetPasswordView(APIView):
         return Response('Вам на почту отправили сообщение', 200)
     
 
-class CustomPasswordConfirmView(APIView):
-    def post(self, request, *args, **kwargs):
-        new_password = request.data.get('new_password')
-        password_confirm = request.data.get('password_confirm')
-        user_id = self.kwargs.get('uidb64')
+
+@swagger_auto_schema(
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['code_confirm', 'new_password', 'password_confirm'],  # Указание обязательных полей
+    )
+)
+@api_view(['POST'])
+def password_confirm(request, *args, **kwargs):
+    new_password = request.data.get('new_password')
+    password_confirm = request.data.get('password_confirm')
+    user_id = request.data.get('code_confirm')
+
+    try:
         user = User.objects.get(id=user_id)
-        if new_password != password_confirm:
-            return Response('Пароли не совпадают', 404)
-        user.set_password(new_password)
-        user.save()
-        return Response('Ваш пароль изменен!', 201)
+    except User.DoesNotExist:
+        return Response('Пользователь не найден', 404)
+
+    if new_password != password_confirm:
+        return Response('Пароли не совпадают', 400)
+
+    user.set_password(new_password)
+    user.save()
+    
+    return Response('Ваш пароль изменен!', 200)
         
