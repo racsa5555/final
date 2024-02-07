@@ -74,6 +74,11 @@ class CustomResetPasswordView(APIView):
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
         required=['code_confirm', 'new_password', 'password_confirm'],  # Указание обязательных полей
+        properties={
+            'code_confirm': openapi.Schema(type=openapi.TYPE_INTEGER),
+            'new_password': openapi.Schema(type=openapi.TYPE_STRING),
+            'password_confirm': openapi.Schema(type=openapi.TYPE_STRING),
+        },
     )
 )
 @api_view(['POST'])
