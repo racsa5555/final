@@ -2,15 +2,19 @@ from http import HTTPStatus
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .serializers import RegisterSerializer, LogOutSerialzer
 from django.contrib.auth import get_user_model
-from .send_email import send_confirmation_email
 from django.shortcuts import get_object_or_404
-from .tasks import send_confirm_email_task, send_password_reset_task
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import permissions
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+
+
+from .serializers import RegisterSerializer, LogOutSerialzer
+from .tasks import send_confirm_email_task, send_password_reset_task
+
 
 User = get_user_model()
 
@@ -89,14 +93,10 @@ def password_confirm(request, *args, **kwargs):
 
     try:
         user = User.objects.get(id=user_id)
-    except User.DoesNotExist:
-        return Response('Пользователь не найден', 404)
-
-    if new_password != password_confirm:
-        return Response('Пароли не совпадают', 400)
-
-    user.set_password(new_password)
-    user.save()
+        if new_password != password_confirm:
+            return Response('Пароли не совпадают', 404)
+        user.set_password(new_password)
+        user.save()
+        return Response('Ваш пароль изменен!', 201)
     
-    return Response('Ваш пароль изменен!', 200)
         
