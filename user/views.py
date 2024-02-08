@@ -104,5 +104,5 @@ def password_confirm(request, *args, **kwargs):
     user.set_password(new_password)
     user.activation_code = ''
     user.save()
-
+    return Response('Пароль изменен!', 200)
         
