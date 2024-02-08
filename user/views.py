@@ -1,11 +1,15 @@
 from http import HTTPStatus
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import permissions
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 
 
 from .serializers import RegisterSerializer, LogOutSerialzer
@@ -68,11 +72,26 @@ class CustomResetPasswordView(APIView):
         return Response('Вам на почту отправили сообщение', 200)
     
 
-class CustomPasswordConfirmView(APIView):
-    def post(self, request, *args, **kwargs):
-        new_password = request.data.get('new_password')
-        password_confirm = request.data.get('password_confirm')
-        user_id = self.kwargs.get('uidb64')
+
+@swagger_auto_schema(
+    method='post',
+    request_body=openapi.Schema(
+        type=openapi.TYPE_OBJECT,
+        required=['code_confirm', 'new_password', 'password_confirm'],  # Указание обязательных полей
+        properties={
+            'code_confirm': openapi.Schema(type=openapi.TYPE_INTEGER),
+            'new_password': openapi.Schema(type=openapi.TYPE_STRING),
+            'password_confirm': openapi.Schema(type=openapi.TYPE_STRING),
+        },
+    )
+)
+@api_view(['POST'])
+def password_confirm(request, *args, **kwargs):
+    new_password = request.data.get('new_password')
+    password_confirm = request.data.get('password_confirm')
+    user_id = request.data.get('code_confirm')
+
+    try:
         user = User.objects.get(id=user_id)
         if new_password != password_confirm:
             return Response('Пароли не совпадают', 404)
@@ -80,6 +99,4 @@ class CustomPasswordConfirmView(APIView):
         user.save()
         return Response('Ваш пароль изменен!', 201)
     
-
-        
         
