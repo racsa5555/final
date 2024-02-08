@@ -20,8 +20,8 @@ def send_confirmation_email(email, code):
     )
 
 
-def send_password_reset_email(email, user_id):
-    password_reset_url = f'{user_id}'
+def send_password_reset_email(email, code):
+    password_reset_url = f'{code}'
     message = format_html(
         'Здравствуйте, Ваш код подтверждения:'
         ' {} ',

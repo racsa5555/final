@@ -8,6 +8,6 @@ def send_confirm_email_task(email, code):
     send_confirmation_email(email, code)
 
 @app.task
-def send_password_reset_task(email, user_id):
-    send_password_reset_email(email, user_id)
+def send_password_reset_task(email, code):
+    send_password_reset_email(email, code)
 # shared_task | app.task

@@ -60,11 +60,12 @@ class CustomResetPasswordView(APIView):
     def post(self, request):
         email = request.data.get('email')
         user = User.objects.get(email=email)
-        user_id = user.id
+        user.create_activation_code()
+        user.save()
         if not user:
             return Response({'ValidationError': 'Нет такого пользователя'}, status=HTTPStatus.BAD_REQUEST)
         
-        send_password_reset_task.delay(email=email, user_id=user_id)
+        send_password_reset_task.delay(email=email, code=user.activation_code)
         return Response('Вам на почту отправили сообщение', 200)
     
 
@@ -73,9 +74,10 @@ class CustomResetPasswordView(APIView):
     method='post',
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
-        required=['code_confirm', 'new_password', 'password_confirm'],  # Указание обязательных полей
+        required=['email','code_confirm', 'new_password', 'password_confirm'],  # Указание обязательных полей
         properties={
-            'code_confirm': openapi.Schema(type=openapi.TYPE_INTEGER),
+            'email':openapi.Schema(type=openapi.TYPE_STRING),
+            'code_confirm': openapi.Schema(type=openapi.TYPE_STRING),
             'new_password': openapi.Schema(type=openapi.TYPE_STRING),
             'password_confirm': openapi.Schema(type=openapi.TYPE_STRING),
         },
@@ -83,19 +85,23 @@ class CustomResetPasswordView(APIView):
 )
 @api_view(['POST'])
 def password_confirm(request, *args, **kwargs):
+    email = request.data.get('email')
     new_password = request.data.get('new_password')
     password_confirm = request.data.get('password_confirm')
-    user_id = request.data.get('code_confirm')
+    code = request.data.get('code_confirm')
 
     try:
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(email=email)
     except User.DoesNotExist:
         return Response('Пользователь не найден', 404)
-
+    if user.activation_code != code:
+        print(user.activation_code, code)
+        return Response(f'Неверный код подтверждения', 400)
     if new_password != password_confirm:
         return Response('Пароли не совпадают', 400)
 
     user.set_password(new_password)
+    user.activation_code == ''
     user.save()
     
     return Response('Ваш пароль изменен!', 200)
