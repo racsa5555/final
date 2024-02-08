@@ -89,19 +89,15 @@ class CustomResetPasswordView(APIView):
 )
 @api_view(['POST'])
 def password_confirm(request, *args, **kwargs):
-    email = request.data.get('email')
     new_password = request.data.get('new_password')
     password_confirm = request.data.get('password_confirm')
     code = request.data.get('code_confirm')
 
     try:
-        user = User.objects.get(email=email)
+        user = User.objects.get(activation_code=code)
     except User.DoesNotExist:
-        return Response('Пользователь не найден', 404)
+        return Response('Неверный код подтверждения', 404)
     
-    if user.activation_code != code:
-        print(user.activation_code, code)
-        return Response(f'Неверный код подтверждения', 400)
     if new_password != password_confirm:
         return Response('Пароли не совпадают', 400)
 
