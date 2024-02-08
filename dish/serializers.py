@@ -1,11 +1,11 @@
-from ingridient.models import Ingridient
 from rest_framework import serializers
-from django.db.models import Avg,Count
+from django.db.models import Avg
 
-from .models import Dish,IngridientItem
+from ingridient.models import Ingridient
 from comment.models import Comment
 from comment.serializers import CommentSerializer
 from like.models import Like
+from .models import Dish,IngridientItem
 
 class IngridientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -14,17 +14,9 @@ class IngridientSerializer(serializers.ModelSerializer):
 
 
 class IngridientItemSerializer(serializers.ModelSerializer):
-    ingridient = serializers.SerializerMethodField()
-    id = serializers.SerializerMethodField()
     class Meta:
         fields = ['ingridient','quantity','id']
         model = IngridientItem
-    def get_id(self,obj):
-        id = obj.ingridient.id
-        return id
-    def get_ingridient(self,obj):
-        name = obj.ingridient.name
-        return name
 
 
 class DishSerializer(serializers.ModelSerializer):
@@ -49,19 +41,28 @@ class DishSerializer(serializers.ModelSerializer):
                 IngridientItem.objects.create(dish = dish,ingridient = ingridient['ingridient'])
         return dish
     
-
-    def to_representation(self, instance):
-        rep = super().to_representation(instance)
-        rep['ingridients'] = IngridientItemSerializer(instance.items.all(),many = True).data
-        action = self.context.get('view')
-        if action == 'retrieve':
-            comments = Comment.objects.filter(dish = instance)
-            rep['comments'] = CommentSerializer(comments,many=True).data
-            rep['rating'] = instance.rating.aggregate(Avg('rating'))
-            rating = rep['rating']
-            rating['rating_count'] = instance.rating.count()
-            rep['likes_count'] = Like.objects.filter(dish=instance).count()
-        return rep
+class DishRetrieveSerializer(serializers.ModelSerializer):
+    comments = serializers.SerializerMethodField()
+    likes_count = serializers.SerializerMethodField()
+    rating = serializers.SerializerMethodField()
+    rating_count = serializers.SerializerMethodField()
     
+    class Meta:
+        model = Dish
+        fields = '__all__'
 
-
+    def get_comments(self,obj):
+        comments = Comment.objects.select_related('dish').filter(dish = obj)
+        return CommentSerializer(comments,many=True).data
+    
+    def get_likes_count(self,obj):
+        return Like.objects.select_related('dish').filter(dish=obj).count()
+    
+    
+    def get_rating(self,obj):
+        return obj.rating.aggregate(Avg('rating'))
+    
+    def get_rating_count(self,obj):
+        return obj.rating.count()
+    
+    
