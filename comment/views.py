@@ -12,7 +12,7 @@ from .models import Comment
 from .permissions import IsOwner
 
 class StandartResultPagination(PageNumberPagination):
-    page_size = 1
+    page_size = 3
     page_query_param = 'page'
 
 
@@ -20,13 +20,10 @@ class CommentViewSet(ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     pagination_class = StandartResultPagination
-    filter_backends = (SearchFilter, DjangoFilterBackend)
-    search_fields = ['content']
-    filterset_fields = ['dish']
 
     @action(detail=False, methods=['GET'])
     def get_user_comments(self, request):
-        user_comments = Comment.objects.filter(owner=request.user)
+        user_comments = Comment.objects.select_related('owner').filter(owner = request.user)
         serializer = CommentSerializer(user_comments, many=True)
         return Response(serializer.data)
 

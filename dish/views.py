@@ -1,21 +1,19 @@
-from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.generics import ListCreateAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
 
 from like.models import Favorite, Like
-from .models import Dish
-from .serializers import *
-from .permissions import IsOwner
-from .fiters import DishFilter
-from dish import permissions
 from comment.serializers import CommentSerializer
 from rating.serializers import RatingSerializer
+
+from .models import Dish
+from .fiters import DishFilter
+from .serializers import *
+from .permissions import IsOwner
 
 
 
@@ -33,8 +31,8 @@ class DishViewSet(ModelViewSet):
     
     def get_permissions(self):
         if self.request.method in ('PATCH', 'PUT', 'DELETE'):
-            return [permissions.IsAuthenticated(), IsOwner()]
-        return [permissions.AllowAny()]
+            return [IsAuthenticated(), IsOwner()]
+        return [AllowAny()]
     
     def get_serializer_class(self):
         if self.action == 'retrieve':
@@ -104,19 +102,14 @@ class DishViewSet(ModelViewSet):
             owner=request.user
         )
         return Response('добавлено в избранное', 201)
+    
+    @action(detail = False, methods = ['GET'],permission_classes=[IsAuthenticated()])
+    def recomendations(self,request):
+        pass
+
+        
 
 
 
 
 
-
-
-
-
-# class YouCanCook(ListCreateAPIView):
-#     serializer_class = DishSerializer
-
-#     def list(self, request, *args, **kwargs):
-#         queryset = Ingridient.objects.all()
-#         serializer = IngridientSerializer(queryset,many = True)
-#         return Response(serializer.data)

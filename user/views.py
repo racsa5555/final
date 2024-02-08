@@ -1,14 +1,16 @@
 from http import HTTPStatus
 
+from django.contrib.auth import get_user_model
+from django.shortcuts import get_object_or_404
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .serializers import RegisterSerializer, LogOutSerialzer
-from django.contrib.auth import get_user_model
-from .send_email import send_confirmation_email
-from django.shortcuts import get_object_or_404
-from .tasks import send_confirm_email_task, send_password_reset_task
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import permissions
+
+
+from .serializers import RegisterSerializer, LogOutSerialzer
+from .tasks import send_confirm_email_task, send_password_reset_task
+
 
 User = get_user_model()
 
@@ -77,4 +79,7 @@ class CustomPasswordConfirmView(APIView):
         user.set_password(new_password)
         user.save()
         return Response('Ваш пароль изменен!', 201)
+    
+
+        
         
