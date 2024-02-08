@@ -20,7 +20,7 @@ class IngridientItemSerializer(serializers.ModelSerializer):
 
 
 class DishSerializer(serializers.ModelSerializer):
-    ingridients = IngridientItemSerializer(many = True,write_only = True)
+    ingridients = IngridientItemSerializer(many = True,write_only = True,)
     type = serializers.CharField()
     owner = serializers.ReadOnlyField(source = 'user.email')
     cuisine = serializers.CharField()

@@ -78,9 +78,8 @@ class CustomResetPasswordView(APIView):
     method='post',
     request_body=openapi.Schema(
         type=openapi.TYPE_OBJECT,
-        required=['email','code_confirm', 'new_password', 'password_confirm'],  # Указание обязательных полей
+        required=['code_confirm', 'new_password', 'password_confirm'],  # Указание обязательных полей
         properties={
-            'email':openapi.Schema(type=openapi.TYPE_STRING),
             'code_confirm': openapi.Schema(type=openapi.TYPE_STRING),
             'new_password': openapi.Schema(type=openapi.TYPE_STRING),
             'password_confirm': openapi.Schema(type=openapi.TYPE_STRING),
@@ -97,6 +96,7 @@ def password_confirm(request, *args, **kwargs):
         user = User.objects.get(activation_code=code)
     except User.DoesNotExist:
         return Response('Неверный код подтверждения', 404)
+
     
     if new_password != password_confirm:
         return Response('Пароли не совпадают', 400)
