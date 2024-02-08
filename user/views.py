@@ -90,13 +90,11 @@ def password_confirm(request, *args, **kwargs):
     new_password = request.data.get('new_password')
     password_confirm = request.data.get('password_confirm')
     user_id = request.data.get('code_confirm')
-
-    try:
-        user = User.objects.get(id=user_id)
-        if new_password != password_confirm:
-            return Response('Пароли не совпадают', 404)
-        user.set_password(new_password)
-        user.save()
-        return Response('Ваш пароль изменен!', 201)
+    user = User.objects.get(id=user_id)
+    if new_password != password_confirm:
+        return Response('Пароли не совпадают', 404)
+    user.set_password(new_password)
+    user.save()
+    return Response('Ваш пароль изменен!', 201)
     
         
