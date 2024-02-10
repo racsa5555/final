@@ -33,6 +33,7 @@ ALLOWED_HOSTS = config('ALLOWED_HOSTS').split()
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -251,4 +252,36 @@ LOGGING = {
             'level': 'DEBUG',
         }
     }
+}
+JAZZMIN_SETTINGS = {
+    "site_title": "Ecouse",
+    "site_header": "Ecouse",
+    "site_logo_classes": "img-circle",
+    "welcome_sign": "Добро пожаловать в Jazzmene",
+    "show_sidebar": True,
+    "navigation_expanded": True,
+    "hide_apps": ["social_django", "auth"],
+    "usermenu_links": [
+        {
+            "name": "Помощь",
+            "url": "https://www.google.com/",
+            "new_window": True
+        },
+        {
+            "model": "auth.user"
+        }
+    ],
+    "topmenu_links": [
+        {"name": "Домой", "url": "admin:index",
+         "permissions": ["auth.view_user"]},
+        {"name": "Поддержка", "url": "https://www.google.com/",
+         "new_window": True},
+    ],
+    "show_ui_builder": True,
+    "changeform_format": "horizontal_tabs",
+    "changeform_format_overrides": {"auth.user": "collapsible",
+                                    "auth.group": "vertical_tabs"},
+    "show_icons": True, 
+    "default_theme": "cerulean", 
+    "related_modal_active": True,
 }

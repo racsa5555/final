@@ -11,4 +11,5 @@ gunicorn
 django-filter
 django-cors-headers
 aiogram
+django-jazzmin
 requests
