@@ -3,6 +3,9 @@ from rest_framework.generics import ListAPIView
 
 from dish.models import IngridientItem
 from dish.serializers import IngridientItemSerializer
+from ingridient.models import Ingridient
+
+from .serializers import IngridientGetSerializer
 
 
 class IngridientItemAPIView(ListAPIView):
@@ -13,4 +16,6 @@ class IngridientItemAPIView(ListAPIView):
         return queryset
     
 
-    
+class IngridientsGetSerializer(ListAPIView):
+    serializer_class = IngridientGetSerializer
+    queryset = Ingridient.objects.all()

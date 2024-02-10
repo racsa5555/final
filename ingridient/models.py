@@ -15,3 +15,4 @@ class Ingridient(models.Model):
     image = models.ImageField(upload_to='media', null=True)
     
 
+
