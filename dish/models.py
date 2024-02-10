@@ -8,13 +8,6 @@ class IngridientItem(models.Model):
     ingridient = models.ForeignKey(Ingridient,on_delete = models.CASCADE,related_name = 'items')
     dish = models.ForeignKey('Dish',on_delete = models.CASCADE,related_name ='items')
     quantity = models.PositiveIntegerField(default = 1)
-# ingridientItem1 - мясо
-# ingridientItem2 - яйцо
-# for d in Dish.objects.prefetch_related():
-#   for x in d.items:
-    # if x.id in set
-    # queryset.
-
     
 class Dish(models.Model):
     CUISINE_CHOICES = (

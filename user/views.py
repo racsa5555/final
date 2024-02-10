@@ -96,6 +96,7 @@ def password_confirm(request, *args, **kwargs):
         user = User.objects.get(activation_code=code)
     except User.DoesNotExist:
         return Response('Неверный код подтверждения', 404)
+
     
     if new_password != password_confirm:
         return Response('Пароли не совпадают', 400)

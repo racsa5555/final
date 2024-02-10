@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+from dish.serializers import DishSerializer
 from .models import Favorite,Like
 
 
@@ -28,3 +29,10 @@ class LikeHistorySerializer(serializers.ModelSerializer):
 
     def get_dish(self,obj):
         return obj.dish.name
+    
+class FavoriteHistorySerializer(serializers.ModelSerializer):
+    dish = DishSerializer()
+    
+    class Meta:
+        model = Favorite
+        fields = '__all__'
