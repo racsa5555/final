@@ -13,11 +13,9 @@ def pretty_dish(response_data):
                 dish_text += ingr["name"]
         dish_text += f"Время приготовления: {dish['cooking_time']} минут\n"
         if dish['photo']:
-            photo = 'dish'['photo']
-            response = requests.get(photo)
-            if response.status_code == 200:
-                with open('product_image.jpg', 'wb') as file:
-                    file.write(response.content)
+            photo = dish['photo']
+            dish_text += f'Фото:{photo}\n'
+
 
             # dish_text += f"Фото:({dish['photo']})\n"
         dish_text += f"Рецепт: {dish['recipe']}\n"

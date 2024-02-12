@@ -1,7 +1,7 @@
 import aiohttp
 import logging
 import asyncio
-API = 'http://127.0.0.1:8000/api/'
+API = 'http://34.16.110.19/api/'
 
 class User:
     def __init__(self,data):

@@ -81,6 +81,18 @@ services:
     networks:
       - backend
 
+  bot: 
+    build: 
+      context: . 
+      dockerfile: bot/Dockerfile
+    volumes:
+      - .:/usr/src/app/
+    depends_on:
+      - web
+    environment: 
+      - BOT_TOKEN=${BOT_TOKEN}
+
+
 volumes:
   postgres_data:
   static_volume:

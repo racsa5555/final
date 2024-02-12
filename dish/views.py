@@ -3,6 +3,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.filters import SearchFilter
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
@@ -28,8 +29,9 @@ class DishPagination(PageNumberPagination):
 class DishViewSet(ModelViewSet):
     queryset = Dish.objects.prefetch_related('ingridients')
     pagination_class = DishPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = DishFilter
+    search_fields = ['name']
     
     def get_permissions(self):
         if self.request.method in ('PATCH', 'PUT', 'DELETE'):
