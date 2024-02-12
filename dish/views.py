@@ -2,10 +2,10 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated,AllowAny
+from rest_framework.filters import SearchFilter
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
-
 from like.models import Favorite, Like
 from comment.serializers import CommentSerializer
 from rating.serializers import RatingSerializer
