@@ -26,8 +26,9 @@ class DishPagination(PageNumberPagination):
 class DishViewSet(ModelViewSet):
     queryset = Dish.objects.prefetch_related('ingridients')
     pagination_class = DishPagination
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = DishFilter
+    search_fields = ['name']
     
     def get_permissions(self):
         if self.request.method in ('PATCH', 'PUT', 'DELETE'):

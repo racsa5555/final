@@ -3,6 +3,7 @@ DB_USER=
 DB_PASS=
 DB_HOST=
 DB_PORT=
+SECRET_KEY=django-insecure-x1adm%6_m+i9vt5*=c+paqsni@8r8=m@=1$9)&mt==^7#0qt*9
 
 EMAIL_PORT=587
 EMAIL_USE_TLS=True
