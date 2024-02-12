@@ -1,3 +1,4 @@
+from random import sample
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework.decorators import action
@@ -5,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated,AllowAny
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework.pagination import PageNumberPagination
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Count
 
 from like.models import Favorite, Like
 from comment.serializers import CommentSerializer
@@ -73,7 +75,7 @@ class DishViewSet(ModelViewSet):
         else:
             if not dish.rating.filter(owner = user).exists():
                 return Response('You dont post rating',400)
-            rating = dish.rating.get(owner = user)
+            rating = dish.rating.get(owner = user,dish = dish)
             rating.delete()
             return Response('Удалено',204)
         
@@ -104,9 +106,19 @@ class DishViewSet(ModelViewSet):
         return Response('добавлено в избранное', 201)
     
     @action(detail = False, methods = ['GET'],permission_classes=[IsAuthenticated()])
-    def recomendations(self,request):
-        pass
+    def recommendations(self, request, *args, **kwargs):
+        dishes = Dish.objects.prefetch_related('likes')
+        liked_dishes = request.user.likes.all()
 
+        if liked_dishes.exists():
+            one_liked_dish = sample(list(liked_dishes), 1)[0]
+            rec_dish = dishes.filter(type=one_liked_dish.dish.type, cuisine=one_liked_dish.dish.cuisine).all()
+            recommendations = rec_dish.annotate(like_count=Count('likes')).order_by('-like_count')[:4]
+        else:
+            recommendations = sample(list(dishes), 4)
+
+        serializer = DishRetrieveSerializer(recommendations, many=True)
+        return Response(serializer.data, status=200)
         
 
 

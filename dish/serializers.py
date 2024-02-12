@@ -9,7 +9,7 @@ from .models import Dish,IngridientItem
 
 class IngridientSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = '__all__'
+        fields = ['name']
         model = Ingridient
 
 
@@ -20,12 +20,17 @@ class IngridientItemSerializer(serializers.ModelSerializer):
 
 
 class DishSerializer(serializers.ModelSerializer):
-    ingridients = IngridientItemSerializer(many = True,write_only = True,)
+    ingridients = serializers.SerializerMethodField()
     owner = serializers.ReadOnlyField(source = 'user.email')
     
     class Meta:
         model = Dish
         fields = '__all__'
+
+    def get_ingridients(self,obj):
+        ingrs = IngridientSerializer(data = obj.ingridients.all(),many = True)
+        ingrs.is_valid()
+        return ingrs.data
 
     def create(self, validated_data):
         ingridients = validated_data.pop('ingridients')
