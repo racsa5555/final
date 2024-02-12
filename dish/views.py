@@ -41,7 +41,10 @@ class DishViewSet(ModelViewSet):
     def get_serializer_class(self):
         if self.action == 'retrieve':
             return DishRetrieveSerializer
-        return DishSerializer
+        elif self.action == 'create':
+            return DishPostSerializer
+        else:
+            return DishSerializer
     
     @swagger_auto_schema(method='POST', request_body=CommentSerializer, operation_description='add comment for post')
     @action(detail=True, methods=['POST'])
