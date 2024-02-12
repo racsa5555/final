@@ -6,3 +6,4 @@ class UserRegisterState(StatesGroup):
     first_name = State()
     last_name = State()
     user = None
+    login = State()
