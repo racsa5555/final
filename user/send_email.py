@@ -1,21 +1,22 @@
 from django.core.mail import send_mail
 from django.utils.html import format_html
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 def send_confirmation_email(email, code):
     activation_url = f'http://34.16.110.19/api/user/activate/?u={code}'
-    message = format_html(
-        'Здравствуйте, активируйте ваш аккаунт'
-        'Чтобы активировать аккаунт, перейдите по ссылке '
-        ' {} '
-        'Не передавайте код никому',
-        activation_url
-    )
+    context = {
+        'activation_url': activation_url
+    }
     
+    msg_html = render_to_string('index.html', context)
+    message = strip_tags(msg_html)
     send_mail(
-        'Здравствуйте',
+        'Account activation',
         message,
         'test@gmail.com',
         [email],
+        html_message=msg_html,
         fail_silently=False
     )
 
