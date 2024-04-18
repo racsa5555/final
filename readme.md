@@ -9,6 +9,16 @@
   - Получение всех блюд
   - Выставление рейтинга блюду
 
+## Технологии
+- Django,DRF
+- Postgresql
+- Celery
+- Redis
+- Docker,docker-compose
+- Nginx
+- Gunicorn
+- Aiogram
+
 ## Для начала работы с программой необходимо выполнить в терминале следующие действия
 
 > [!IMPORTANT]
