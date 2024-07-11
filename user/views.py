@@ -13,7 +13,7 @@ from drf_yasg import openapi
 
 
 from .serializers import RegisterSerializer, LogOutSerialzer
-from .tasks import send_confirm_email_task, send_password_reset_task
+from .send_email import send_confirmation_email, send_password_reset_email
 
 
 User = get_user_model()
@@ -28,7 +28,7 @@ class RegistrationView(APIView):
         if user:
             try:
                 # send_confirmation_email(user.email, user.activation_code)
-                send_confirm_email_task.delay(user.email, user.activation_code)
+                send_confirmation_email(user.email, user.activation_code)
                 
             except:
                 return Response(
@@ -69,7 +69,7 @@ class CustomResetPasswordView(APIView):
         if not user:
             return Response({'ValidationError': 'Нет такого пользователя'}, status=HTTPStatus.BAD_REQUEST)
         
-        send_password_reset_task.delay(email=email, code=user.activation_code)
+        send_password_reset_email(email=email, code=user.activation_code)
         return Response('Вам на почту отправили сообщение', 200)
     
 
